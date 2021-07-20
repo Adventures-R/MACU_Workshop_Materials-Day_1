@@ -1,0 +1,623 @@
+---
+title: "Intro to ggplot"
+
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(tidyverse)
+library(flair)
+library(palmerpenguins)
+
+penguins <- penguins %>%
+  drop_na()
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+style_duo(
+  primary_color = "#26116c",
+  secondary_color = "#fd5e53",
+  title_slide_text_color = "#fff8e7",
+  header_font_google = google_font("Roboto"),
+  text_font_google   = google_font("Roboto Condensed"),
+  code_font_google   = google_font("Droid Mono")
+)
+```
+
+class: center, middle
+
+# The Grammar of Graphics
+
+---
+## Grammar of Graphics
+
+
+
+The **grammar of graphics** is a framework for creating data visualizations.
+
+--
+
+A visualization consists of:
+
+* The **aesthetic**:  Which *variables* are dictacting which *plot elements*.
+
+* The **geometry**:  What *shape* of plot you are making.
+
+---
+## Grammar of Graphics
+
+For example:
+
+.pull-left[
+The **aesthetic** is `species` on the x-axis, `bill_length_mm` on the y-axis, colored by `species`.
+
+
+The **geometry** is a **boxplot**.
+
+]
+
+.pull-right[
+
+
+```{r plot, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot()
+```
+]
+
+---
+## ggplot
+
+The package `ggplot2` implements the *grammar of graphics* in R.
+
+--
+
+Code for the previous example:
+
+```{r, echo = FALSE}
+decorate("plot") %>%
+  flair("ggplot")
+```
+---
+## The aesthetic:
+
+```{r, echo = FALSE}
+decorate("plot") %>%
+  flair("aes") %>%
+  flair("x =", background = "pink") %>%
+  flair("y = ", background = "pink") %>%
+  flair("fill = ", background = "pink") %>%
+  flair("species", background = "light blue") %>%
+  flair("bill_length_mm", background = "light blue")
+```
+
+---
+## The geometry:
+
+```{r, echo = FALSE}
+decorate("plot") %>%
+  flair("geom") %>%
+  flair("boxplot", background = "pink")
+```
+
+---
+## Other optional elements:
+
+* The **scales** of the x- and y-axes.
+
+--
+
+* The **color** of elements that are not mapped to aesthetics.
+
+--
+
+* The **theme** of the plot
+
+--
+
+... and many more!
+
+---
+## Scales
+
+.pull-left[
+```{r, eval = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+```{r, eval = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() +
+  scale_y_reverse()
+```
+
+]
+---
+## Scales
+
+.pull-left[
+```{r plot1, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+```{r plot2, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() +
+  scale_y_reverse()
+```
+
+]
+
+---
+## Non-aesthetic colors
+
+.pull-left[
+```{r, eval = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+```{r, eval = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot(fill = "cornflowerblue")
+```
+]
+
+---
+## Non-aesthetic colors
+
+.pull-left[
+```{r, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+```{r, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot(fill = "cornflowerblue")
+```
+]
+---
+## Quick quiz
+
+What will this show?
+
+```{r, eval = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = "cornflowerblue")) +
+  geom_boxplot()
+```
+---
+## Quick Quiz
+
+```{r, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = "cornflowerblue")) +
+  geom_boxplot()
+```
+
+---
+## Themes
+
+.pull-left[
+```{r, eval = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+```{r, eval = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot() + 
+  theme_classic()
+```
+
+---
+## Themes
+
+.pull-left[
+```{r, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+```{r, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot() + 
+  theme_classic()
+```
+]
+
+---
+## Quick Quiz
+
+What are the **aesthetics**, **geometry**, **scales**, and other options?
+
+![](https://imgs.xkcd.com/comics/escalators.png)
+
+
+
+---
+## Resources
+
+
+* Scales:  https://ggplot2-book.org/scale-position.html
+
+
+* Themes:  https://ggplot2-book.org/polishing.html
+
+
+---
+class: center, middle, inverse
+
+# Geometries: The "Big Five"
+
+---
+## 1. Bar Plots
+
+Used for showing **counts** of a **categorical variable**:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species)) +
+  geom_bar()
+```
+
+---
+## 1. Bar Plots
+
+... or **relationships** between  **two categorical variables**:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, fill = sex)) +
+  geom_bar()
+```
+
+---
+## 1. Bar Plots
+
+Would we rather see percents?
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, fill = island)) +
+  geom_bar(position = "fill")
+```
+
+
+---
+## 1. Bar Plots
+
+Or side-by-side?
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, fill = island)) +
+  geom_bar(position = "dodge")
+```
+
+
+---
+
+## 1.5  Column Plots
+
+If you want the height of your plot to be something **numeric**, rather than **counts**:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_col()
+```
+
+---
+
+
+## 1.5  Column Plots
+
+Wait - do penguins have a bill length of 6000 mm????
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_col()
+```
+
+---
+
+
+## 1.5  Column Plots
+
+Wait - do penguins have a bill length of 6000 mm????
+
+```{r}
+penguins %>%
+  group_by(species) %>%
+  summarize(avg_bill = mean(bill_length_mm)) %>%
+  ggplot(aes(x = species, y = avg_bill)) +
+  geom_col()
+```
+
+---
+
+```{r, echo = FALSE}
+penguins %>%
+  group_by(species) %>%
+  summarize(avg_bill = mean(bill_length_mm)) %>%
+  ggplot(aes(x = species, y = avg_bill)) +
+  geom_col()
+```
+
+---
+## 2. Boxplots
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot()
+```
+
+---
+## 2. Boxplots
+
+Compare a second categorical:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = sex)) +
+  geom_boxplot()
+```
+
+---
+## 2. Boxplots
+
+Compare a second categorical:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = sex)) +
+  geom_boxplot()
+```
+
+---
+## 3. Histograms
+
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram()
+```
+
+
+---
+## 3. Histograms
+
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram(bins = 100)
+```
+
+---
+## 3. Histograms
+
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram(bins = 10)
+```
+---
+## 3.5 Densities
+
+Suppose you want to compare histograms by **category**:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm, fill = species)) +
+  geom_histogram()
+```
+
+---
+## 3.5 Densities
+
+Cleaner:  Smoothed histogram, or density:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm, fill = species)) +
+  geom_density()
+```
+
+---
+## 3.5 Densities
+
+Even cleaner:  The `alpha` option:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm, fill = species)) +
+  geom_density(alpha = 0.5)
+```
+
+---
+## 4/5 Scatterplots/line plots
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point()
+```
+
+---
+## 4/5 Scatterplots/line plots
+
+Colors for extra info:
+
+```{r}
+penguins %>%
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point()
+```
+
+---
+## 5. Line Plots
+
+```{r}
+penguins %>%
+  group_by(species, sex) %>%
+  summarize(avg_bill = mean(bill_length_mm)) %>%
+  ggplot(aes(x = species, y = avg_bill, group = sex)) +
+  geom_point() + 
+  geom_line()
+```
+
+---
+
+```{r, echo = FALSE}
+penguins %>%
+  group_by(species, sex) %>%
+  summarize(avg_bill = mean(bill_length_mm)) %>%
+  ggplot(aes(x = species, y = avg_bill, group = sex)) +
+  geom_point() + 
+  geom_line()
+```
+
+---
+
+## Resources:
+
+https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+
+![](https://image.slidesharecdn.com/ggplot2-cheatsheet-2-170605180144/95/ggplot2-cheatsheet21-1-638.jpg?cb=1496686005)
+
+---
+## Quick Quiz
+
+
+```{r ggplot, include = FALSE, warning = FALSE}
+starwars %>%
+  filter(species == "Human") %>%
+  ggplot(aes(x = height, y = mass, color = gender)) + 
+  geom_point(pch = 17) +
+  ggtitle("Heights and Weights of Humans in Star Wars")
+```
+
+```{r, echo = FALSE, warning = FALSE}
+decorate("ggplot") %>%
+  mask("filter ", background = "#fdff32")%>%
+  mask("x ", background = "#fdff32") %>%
+  mask("y ", background = "#fdff32") %>%
+  mask("color", background = "#fdff32") %>%
+  mask("pch ", background = "#fdff32") %>%
+  mask("point", background = "#fdff32")  %>%
+  mask("ggtitle", background = "#fdff32") 
+```
+
+---
+
+
+---
+
+class: center, middle
+
+# Multiple Plots
+
+---
+## Facet Wrapping
+
+```{r}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot() +
+  facet_wrap(~sex)
+```
+
+---
+
+
+```{r, echo = FALSE}
+penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot() +
+  facet_wrap(~sex)
+```
+
+---
+## Patchwork
+
+```{r}
+library(patchwork)
+
+box <- penguins %>%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot()
+
+dens <- penguins %>%
+  ggplot(aes(fill = species, x = bill_length_mm)) +
+  geom_density()
+```
+
+---
+
+```{r, echo = FALSE}
+box + dens
+```
+
+---
+
+```{r, echo = FALSE}
+box / dens
+```
+
+---
+
+```{r, echo = FALSE}
+box / (dens + box)
+```
+

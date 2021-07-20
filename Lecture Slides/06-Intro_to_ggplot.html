@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Intro to ggplot</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Intro to ggplot
+
+---
+
+
+
+
+
+
+class: center, middle
+
+# The Grammar of Graphics
+
+---
+## Grammar of Graphics
+
+
+
+The **grammar of graphics** is a framework for creating data visualizations.
+
+--
+
+A visualization consists of:
+
+* The **aesthetic**:  Which *variables* are dictacting which *plot elements*.
+
+* The **geometry**:  What *shape* of plot you are making.
+
+---
+## Grammar of Graphics
+
+For example:
+
+.pull-left[
+The **aesthetic** is `species` on the x-axis, `bill_length_mm` on the y-axis, colored by `species`.
+
+
+The **geometry** is a **boxplot**.
+
+]
+
+.pull-right[
+
+
+![](06-Intro_to_ggplot_files/figure-html/plot-1.png)&lt;!-- --&gt;
+]
+
+---
+## ggplot
+
+The package `ggplot2` implements the *grammar of graphics* in R.
+
+--
+
+Code for the previous example:
+
+
+&lt;code class ='r hljs remark-code'&gt;penguins %&gt;%&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt;ggplot&lt;/span&gt;(aes(x = species, y = bill_length_mm, fill = species)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_boxplot()&lt;/code&gt;
+
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-44-1.png)&lt;!-- --&gt;
+---
+## The aesthetic:
+
+
+&lt;code class ='r hljs remark-code'&gt;penguins %&gt;%&lt;br&gt;&amp;nbsp;&amp;nbsp;ggplot(&lt;span style="background-color:#ffff7f"&gt;aes&lt;/span&gt;(&lt;span style="background-color:pink"&gt;x =&lt;/span&gt; &lt;span style="background-color:light blue"&gt;species&lt;/span&gt;, &lt;span style="background-color:pink"&gt;y = &lt;/span&gt;&lt;span style="background-color:light blue"&gt;bill_length_mm&lt;/span&gt;, &lt;span style="background-color:pink"&gt;fill = &lt;/span&gt;&lt;span style="background-color:light blue"&gt;species&lt;/span&gt;)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;geom_boxplot()&lt;/code&gt;
+
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-45-1.png)&lt;!-- --&gt;
+
+---
+## The geometry:
+
+
+&lt;code class ='r hljs remark-code'&gt;penguins %&gt;%&lt;br&gt;&amp;nbsp;&amp;nbsp;ggplot(aes(x = species, y = bill_length_mm, fill = species)) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style="background-color:#ffff7f"&gt;geom&lt;/span&gt;_&lt;span style="background-color:pink"&gt;boxplot&lt;/span&gt;()&lt;/code&gt;
+
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-46-1.png)&lt;!-- --&gt;
+
+---
+## Other optional elements:
+
+* The **scales** of the x- and y-axes.
+
+--
+
+* The **color** of elements that are not mapped to aesthetics.
+
+--
+
+* The **theme** of the plot
+
+--
+
+... and many more!
+
+---
+## Scales
+
+.pull-left[
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() +
+  scale_y_reverse()
+```
+
+]
+---
+## Scales
+
+.pull-left[
+![](06-Intro_to_ggplot_files/figure-html/plot1-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+![](06-Intro_to_ggplot_files/figure-html/plot2-1.png)&lt;!-- --&gt;
+
+]
+
+---
+## Non-aesthetic colors
+
+.pull-left[
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot(fill = "cornflowerblue")
+```
+]
+
+---
+## Non-aesthetic colors
+
+.pull-left[
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-8-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-9-1.png)&lt;!-- --&gt;
+]
+---
+## Quick quiz
+
+What will this show?
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = "cornflowerblue")) +
+  geom_boxplot()
+```
+---
+## Quick Quiz
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-11-1.png)&lt;!-- --&gt;
+
+---
+## Themes
+
+.pull-left[
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot() 
+```
+]
+
+.pull-right[
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot() + 
+  theme_classic()
+```
+
+---
+## Themes
+
+.pull-left[
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-14-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-15-1.png)&lt;!-- --&gt;
+]
+
+---
+## Quick Quiz
+
+What are the **aesthetics**, **geometry**, **scales**, and other options?
+
+![](https://imgs.xkcd.com/comics/escalators.png)
+
+
+
+---
+## Resources
+
+
+* Scales:  https://ggplot2-book.org/scale-position.html
+
+
+* Themes:  https://ggplot2-book.org/polishing.html
+
+
+---
+class: center, middle, inverse
+
+# Geometries: The "Big Five"
+
+---
+## 1. Bar Plots
+
+Used for showing **counts** of a **categorical variable**:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species)) +
+  geom_bar()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-16-1.png)&lt;!-- --&gt;
+
+---
+## 1. Bar Plots
+
+... or **relationships** between  **two categorical variables**:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, fill = sex)) +
+  geom_bar()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-17-1.png)&lt;!-- --&gt;
+
+---
+## 1. Bar Plots
+
+Would we rather see percents?
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, fill = island)) +
+  geom_bar(position = "fill")
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-18-1.png)&lt;!-- --&gt;
+
+
+---
+## 1. Bar Plots
+
+Or side-by-side?
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, fill = island)) +
+  geom_bar(position = "dodge")
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-19-1.png)&lt;!-- --&gt;
+
+
+---
+
+## 1.5  Column Plots
+
+If you want the height of your plot to be something **numeric**, rather than **counts**:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_col()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-20-1.png)&lt;!-- --&gt;
+
+---
+
+
+## 1.5  Column Plots
+
+Wait - do penguins have a bill length of 6000 mm????
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_col()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-21-1.png)&lt;!-- --&gt;
+
+---
+
+
+## 1.5  Column Plots
+
+Wait - do penguins have a bill length of 6000 mm????
+
+
+```r
+penguins %&gt;%
+  group_by(species) %&gt;%
+  summarize(avg_bill = mean(bill_length_mm)) %&gt;%
+  ggplot(aes(x = species, y = avg_bill)) +
+  geom_col()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-22-1.png)&lt;!-- --&gt;
+
+---
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-23-1.png)&lt;!-- --&gt;
+
+---
+## 2. Boxplots
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
+
+---
+## 2. Boxplots
+
+Compare a second categorical:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = sex)) +
+  geom_boxplot()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+
+---
+## 2. Boxplots
+
+Compare a second categorical:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = sex)) +
+  geom_boxplot()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+
+---
+## 3. Histograms
+
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-27-1.png)&lt;!-- --&gt;
+
+
+---
+## 3. Histograms
+
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram(bins = 100)
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-28-1.png)&lt;!-- --&gt;
+
+---
+## 3. Histograms
+
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm)) +
+  geom_histogram(bins = 10)
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-29-1.png)&lt;!-- --&gt;
+---
+## 3.5 Densities
+
+Suppose you want to compare histograms by **category**:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm, fill = species)) +
+  geom_histogram()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
+
+---
+## 3.5 Densities
+
+Cleaner:  Smoothed histogram, or density:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm, fill = species)) +
+  geom_density()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
+
+---
+## 3.5 Densities
+
+Even cleaner:  The `alpha` option:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm, fill = species)) +
+  geom_density(alpha = 0.5)
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-32-1.png)&lt;!-- --&gt;
+
+---
+## 4/5 Scatterplots/line plots
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm)) +
+  geom_point()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-33-1.png)&lt;!-- --&gt;
+
+---
+## 4/5 Scatterplots/line plots
+
+Colors for extra info:
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = bill_length_mm, y = bill_depth_mm, color = species)) +
+  geom_point()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-34-1.png)&lt;!-- --&gt;
+
+---
+## 5. Line Plots
+
+
+```r
+penguins %&gt;%
+  group_by(species, sex) %&gt;%
+  summarize(avg_bill = mean(bill_length_mm)) %&gt;%
+  ggplot(aes(x = species, y = avg_bill, group = sex)) +
+  geom_point() + 
+  geom_line()
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-35-1.png)&lt;!-- --&gt;
+
+---
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-36-1.png)&lt;!-- --&gt;
+
+---
+
+## Resources:
+
+https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf
+
+![](https://image.slidesharecdn.com/ggplot2-cheatsheet-2-170605180144/95/ggplot2-cheatsheet21-1-638.jpg?cb=1496686005)
+
+---
+## Quick Quiz
+
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;starwars %&gt;%&lt;br&gt;&amp;nbsp;&amp;nbsp;filter(species == "Human") %&gt;%&lt;br&gt;&amp;nbsp;&amp;nbsp;ggplot(aes(&lt;span style="background-color:#fdff32"&gt; &amp;nbsp;&lt;/span&gt;= height, &lt;span style="background-color:#fdff32"&gt; &amp;nbsp;&lt;/span&gt;= mass, &lt;span style="background- &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;:#fdff32"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt; = gender)) + &lt;br&gt;&amp;nbsp;&amp;nbsp;geom_&lt;span style="background-color:#fdff32"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;(&lt;span style="background-color:#fdff32"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;= 17) +&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style="background-color:#fdff32"&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/span&gt;("Heights and Weights of Humans in Star Wars")&lt;/code&gt;
+
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-47-1.png)&lt;!-- --&gt;
+
+---
+
+
+---
+
+class: center, middle
+
+# Multiple Plots
+
+---
+## Facet Wrapping
+
+
+```r
+penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm)) +
+  geom_boxplot() +
+  facet_wrap(~sex)
+```
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
+
+---
+
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-39-1.png)&lt;!-- --&gt;
+
+---
+## Patchwork
+
+
+```r
+library(patchwork)
+
+box &lt;- penguins %&gt;%
+  ggplot(aes(x = species, y = bill_length_mm, fill = species)) +
+  geom_boxplot()
+
+dens &lt;- penguins %&gt;%
+  ggplot(aes(fill = species, x = bill_length_mm)) +
+  geom_density()
+```
+
+---
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
+
+---
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+
+---
+
+![](06-Intro_to_ggplot_files/figure-html/unnamed-chunk-43-1.png)&lt;!-- --&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

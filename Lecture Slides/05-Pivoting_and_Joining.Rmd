@@ -1,0 +1,475 @@
+---
+title: "Pivoting and Joining Datasets"
+
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+library(tidyverse)
+library(flair)
+library(palmerpenguins)
+
+penguins <- penguins %>%
+  drop_na()
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+style_duo(
+  primary_color = "#26116c",
+  secondary_color = "#fd5e53",
+  title_slide_text_color = "#fff8e7",
+  header_font_google = google_font("Roboto"),
+  text_font_google   = google_font("Roboto Condensed"),
+  code_font_google   = google_font("Droid Mono")
+)
+```
+
+class: center, middle
+
+# Tidy Data
+
+---
+## Tidy Data Principles
+
+1. Every **variable** is a **column**.
+
+--
+
+2. Every **observation** (or **sample**) is a **row**.
+
+--
+
+3. Every **value** is in a **cell**
+
+---
+class: center, middle
+
+![](tidy_data.png)
+
+---
+## Tidy Data
+
+Questions to Ponder:
+
+--
+
+What are the **observational units** in the dataset?
+
+--
+
+* In a database of customer demographic info, perhaps it is the *customers*
+
+--
+
+* In a database of transactions, perhaps it is *unique transaction*, i.e, unique combos of *customer* and *date*
+
+--
+
+What are the **variables** we want to study?
+
+--
+
+* Should we have one *numeric* column called `Customer Balance 2020` and one *numeric* column called `Customer Balance 2021`?
+
+--
+
+* Or should we have one *numeric* column called `Customer Balance` and one *categorical* column called `Date`?
+
+---
+## Example
+
+Consider the following dataset containing health information of cereals:
+
+```{r, echo = FALSE}
+cereals <- read_csv("https://www.dropbox.com/s/ll2c9drmlom1ony/cereals.csv?dl=1") %>%
+  mutate_if(is.numeric, ~na_if(.x, -1))
+head(cereals)
+```
+
+
+---
+
+## Example
+
+Consider the research question:  *How do the sugar and protein contents compare across cereal manufacturers?*
+
+--
+
+```{r, eval = FALSE}
+cereals %>%
+  ggplot(aes(x = sugars, y = protein, color = mfr)) +
+  geom_point()
+```
+
+---
+
+
+```{r, echo = FALSE}
+cereals %>%
+  ggplot(aes(x = sugars, y = protein, color = mfr)) +
+  geom_point()
+```
+
+---
+## Example
+
+
+```{r}
+avg_by_mfr <- cereals %>%
+  group_by(mfr) %>%
+  summarize(
+    mean_sugars = mean(sugars),
+    mean_protein = mean(protein)
+  )
+
+avg_by_mfr
+```
+
+---
+
+
+.pull-left[
+```{r}
+avg_by_mfr %>%
+  ggplot(aes(x = mfr, y = mean_sugars)) +
+  geom_col()
+```
+]
+
+.pull-left[
+```{r}
+avg_by_mfr %>%
+  ggplot(aes(x = mfr, y = mean_protein)) +
+  geom_col()
+```
+]
+
+---
+## Example
+
+Why are we stuck?
+
+--
+
+Let's return to the **research question**:  How do the nutrient levels (sugar/protein) vary across manufacturers?
+
+--
+
+This question involves **three variables**:
+
+* `manufacturer` - categorical
+
+* `nutrient level`, how many grams of the nutrient in question are present - quantitative
+
+* `nutrient type`, which nutrient we measured - categorical
+
+--
+
+Our data is not **tidy** with respect to this question!
+
+---
+
+class: center, middle, inverse
+
+# Pivoting Longer
+
+---
+## Pivoting Longer
+
+Right now, our cereal data is **wide**: each nutrient is its own column
+
+```{r, echo = FALSE}
+head(cereals)
+```
+
+
+---
+## Pivoting
+
+Our goal is to make it **long**: One column for all values, one column for nutrient type labels.
+
+--
+
+`pivot_longer()` function need to know:
+
+* Which columns are involved in the pivoting
+
+* What you will name the new **values** variable
+
+* What you will name the new **labels** variable
+
+---
+
+## Pivoting
+
+```{r}
+cereals_longer <- cereals %>%
+  select(name, mfr, protein, sugars) %>%
+  pivot_longer(protein:sugars,
+               names_to = "Nutrient",
+               values_to = "Amount")
+
+cereals_longer
+```
+
+---
+
+```{r, eval = FALSE}
+cereals_longer %>%
+  ggplot(aes(x = mfr, y = Amount, fill = Nutrient)) +
+  geom_boxplot()
+```
+
+---
+
+```{r, echo = FALSE}
+cereals_longer %>%
+  ggplot(aes(x = mfr, y = Amount, fill = Nutrient)) +
+  geom_boxplot()
+```
+
+---
+
+```{r, eval = FALSE}
+cereals_longer %>%
+  group_by(mfr, Nutrient) %>%
+  summarize(
+    avg_amount = mean(Amount)
+  ) %>%
+  ggplot(aes(x = mfr, y = avg_amount, fill = Nutrient)) +
+  geom_col(position = "dodge")
+```
+
+---
+
+```{r, echo = FALSE}
+cereals_longer %>%
+  group_by(mfr, Nutrient) %>%
+  summarize(
+    avg_amount = mean(Amount)
+  ) %>%
+  ggplot(aes(x = mfr, y = avg_amount, fill = Nutrient)) +
+  geom_col(position = "dodge")
+```
+
+
+---
+
+class: center, middle, inverse
+
+# Pivoting Wider
+
+---
+## Example
+
+Let's now return to the `penguins` dataset:
+
+```{r}
+head(penguins)
+```
+
+---
+## Example
+
+Suppose we want to ask the question,
+
+> How much do female and male bill lengths differ, on average, by species?
+
+--
+
+```{r}
+avg_bills <- penguins %>%
+  group_by(species, sex) %>%
+  summarize(
+    avg_bill = mean(bill_length_mm)
+  ) 
+
+avg_bills
+
+```
+
+---
+## Example
+
+```{r, eval = FALSE}
+avg_bills %>%
+  group_by(species) %>%
+  mutate(
+    ??????? - ?????
+  )
+
+```
+
+---
+## Example
+
+What went wrong?
+
+--
+
+We wanted to subtract the variable `avg_bill_female` from the variable `avg_bill_male`.
+
+--
+
+But these are not variables!!!
+
+--
+
+Our data is not **tidy** with respect to our research question.
+
+---
+## Example
+
+```{r}
+avg_bills_wider <- avg_bills %>%
+  pivot_wider(names_from = sex,
+              values_from = avg_bill)
+
+avg_bills_wider
+```
+
+---
+## Example
+
+```{r}
+avg_bills_wider <- avg_bills %>%
+  pivot_wider(names_from = sex,
+              values_from = avg_bill,
+              names_prefix = "avg_bill_")
+
+avg_bills_wider
+```
+
+---
+## Example
+
+```{r}
+avg_bills_wider %>%
+  mutate(
+    bill_diff  = avg_bill_male - avg_bill_female
+  ) %>%
+  arrange(bill_diff)
+```
+
+---
+class: center, middle
+
+![](https://www.fromthebottomoftheheap.net/assets/img/posts/original-dfs-tidy.png)
+
+---
+class: center, middle
+
+![](https://www.fromthebottomoftheheap.net/assets/img/posts/tidyr-longer-wider.gif)
+---
+
+class: center, middle, inverse
+
+## Joining Datasets
+
+---
+
+
+
+## Left Join (and Right Join)
+
+A **left join** prioritizes the **first** dataset.
+
+--
+
+We use it when we are trying to add information from Dataset B into Dataset A,
+without changing the structure of Dataset A.
+
+--
+
+`left_join()` in `dplyr`
+
+--
+
+A **right join** is the same thing, but prioritizing the **second** dataset.
+
+---
+
+![](https://www.garrickadenbuie.com/project/tidyexplain/images/left-join.gif)
+---
+
+![](https://www.garrickadenbuie.com/project/tidyexplain/images/left-join-extra.gif)
+
+---
+
+## Full Join
+
+A **full join** retains **all information** in **either dataset**.
+
+--
+
+`full_join()` in `dplyr`
+
+--
+
+It is used when you have data from two sources, and you want to combine them into one dataset.
+
+--
+
+Note:  Missing information becomes "NA"!
+
+
+---
+
+![](https://www.garrickadenbuie.com/project/tidyexplain/images/full-join.gif)
+
+---
+
+## Inner Join
+
+An **inner join** retains only information for the observations that appear in **both datasets**.
+
+--
+
+`semi_join()` in `dplyr`
+
+--
+
+Careful!  If your subject isn't in **both** Dataset A and Dataset B, the info will be lost!
+
+--
+
+This is used to create a dataset with *no missing information*
+
+---
+
+![](https://www.garrickadenbuie.com/project/tidyexplain/images/semi-join.gif)
+
+---
+
+## Outer Join
+
+An **outer join** retains only information that appears in **one, but not both** of the datasets.
+
+--
+
+`anti_join()` in `dplyr`
+
+--
+
+It is rarely practical as a data creation.
+
+--
+
+Instead, we use it as a shortcut to answer questions about which observations are not in both datasets.
+
+---
+
+![](https://www.garrickadenbuie.com/project/tidyexplain/images/anti-join.gif)
+
+

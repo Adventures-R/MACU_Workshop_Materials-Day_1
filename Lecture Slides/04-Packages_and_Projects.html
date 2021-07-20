@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Packages and Projects</title>
+    <meta charset="utf-8" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Packages and Projects
+
+---
+
+
+
+
+
+
+## Principles of Reproducibility
+
+The idea:  You should be able to send your project to someone else, and they can jump in and start working right away.
+
+1. Files are organized and well-named.
+
+2. References to data and code work for everyone.
+
+3. Package dependency is clear.
+
+4. Code will run the same every time, even if data values change.
+
+5. Analysis process is well-explained and easy to read.
+
+
+
+---
+# Dealing with Directories
+
+
+- Your **working directory** is the folder that R "thinks" it lives in at the moment.
+
+
+```r
+getwd()
+```
+
+```
+## [1] "C:/Users/kbodwin/Dropbox/Adventures_in_R/MAFCU_Trainings/MACU_Workshop_Materials-Day_1"
+```
+
+- If you save things you have created, they save to your working directory by default.
+
+
+---
+
+## The beauty of R Projects
+
+An **R Project** is basically a "flag" planted in a certain directory.
+
+When you double click a **.Rproj** file, it does two things:
+
+1. Open RStudio
+
+2. Set the working directory to be wherever the .Rproj file lives.
+
+3. Link to GitHub, if setup.
+
+--
+This is great for reproducibility!  
+
+Anyone can copy your directory, and the .Rproj will open properly on their computer.
+
+---
+class: center, middle
+
+# Set up your RProj
+
+In RStudio, choose `File &gt; New Project`.
+
+(Save any files you need to.)
+
+Choose **new directory** and create a new folder.
+
+--
+
+Close **all** of your RStudio windows.
+
+Go to your new folder.
+
+Double click the **.Rproj** file (it looks like a cube!)
+
+--
+
+**You should ALWAYS access your work this way from now on!**
+
+---
+# Bad practice
+
+If you put something like this at the top of your .Rmd file, that is not great:
+
+
+```r
+setwd("/User/kbodwin/Dropbox/Teaching/MACU_Workshop/Data/")
+```
+
+- Setting working directory by hand = BAD!  
+
+--
+
+- That directory is specific to you!  Where should someone else look for the data?
+
+--
+
+- Markdown files won't knit this code.
+
+---
+class: center, middle, inverse
+
+# Dealing with packages
+
+---
+
+## install.packages()
+
+To use a package, it must first be *installed* to your copy of RStudio.
+
+This only needs to happen **ONCE** per computer or server.
+
+
+```r
+install.packages("tidyverse")
+```
+
+--
+
+## update.packages()
+
+If a computer you are using has the package, but you aren't sure if it's up to date:
+
+
+```r
+update.packages("tidyverse")
+```
+
+to install the most recent version.
+
+---
+class: center,middle
+# NEVER EVER EVER EVER PUT "install.packages" or "update.packages" INTO YOUR R MARKDOWN FILE!!!!!
+
+---
+
+# library() and require()
+
+- A package must only be *installed* once.
+
+- But it must be *loaded* every time, to tell R it is needed for this analysis.
+
+- `library` gives an **error** if the package isn't installed
+
+- `require` gives a `TRUE/FALSE` value depending on if the package was available
+
+- For now, you should always use `library`
+
+
+```r
+library(tidyverse)
+
+# notice:  no quotes around package name
+```
+
+---
+class: center, middle
+
+# Three annoying complications of packages
+
+---
+
+## Versions
+
+- From time to time, packages get updated
+
+- This is good!
+
+- But, it can mess with your code, which depended on the older version.
+
+- No magic answer; just be aware.
+
+- Typically, 
+
+    + package 1.0.1 to 1.0.2 is a non-breaking change
+    + package 1.1.0 to 1.2.0 is a non-breaking change with warnings
+    + package 1.0.0 to 2.0.0 is a breaking change
+
+
+---
+
+## Dependencies
+
+- A *dependency* is when one package makes use of another.
+
+- For example, if you create a package that uses the function `group_by()`, your package **depends** on `dplyr`
+
+- Typically these get loaded automatically!
+
+- Occasionally, something goes weird and you need to manually install the dependency.
+
+
+---
+
+
+## Conflicts
+
+- Sometimes, packages choose the same name for their functions.  This is called a *conflict*.
+
+- The version loaded first takes precedence.  For example...
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(MASS)
+```
+
+```
+## Warning: package 'MASS' was built under R version 4.0.3
+```
+
+```r
+library(dplyr)
+```
+
+
+```r
+dat %&gt;% select(bob)
+```
+
+```
+## Error in select(., bob): unused argument (bob)
+```
+
+---
+## Conflicts
+
+
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(dplyr)
+```
+
+```
+## Warning: package 'dplyr' was built under R version 4.0.4
+```
+
+```r
+library(MASS)
+```
+
+```
+## Warning: package 'MASS' was built under R version 4.0.3
+```
+
+
+```r
+dat %&gt;% select(bob)
+```
+
+```
+## Error in select(., bob): unused argument (bob)
+```
+
+---
+
+## Conflicts
+
+But this is super annoying, because...
+
+
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(dplyr)  # dplyr loaded here
+library(MASS)
+library(dplyr)  # does nothing, because it sees we already have dplyr
+```
+
+
+```r
+dat %&gt;% select(bob)
+```
+
+```
+## Error in select(., bob): could not find function "select"
+```
+
+---
+
+# Conflicts
+
+ARG!
+
+Best solution:  Be explicit about your intended package using `::`.
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(dplyr) 
+library(MASS)
+
+dat %&gt;% dplyr::select(bob)
+```
+
+--
+
+Another solution: The `conflicted` package
+
+
+```r
+library(conflicted)
+```
+
+```
+## Warning: package 'conflicted' was built under R version 4.0.3
+```
+
+```r
+conflict_prefer("select", "dplyr")
+```
+
+```
+## [conflicted] Will prefer dplyr::select over any other package
+```
+
+---
+class: center, middle, invert
+# Deliverables in R Markdown
+
+---
+# General principles
+
+- Give your file a good title, author, and date
+
+- Name your file something meaningful (match the title!)
+
+- Use `#` to make section headings etc.
+
+- Each code chunk is a unified thought.
+
+- Text before and after each code chunk to motivate your code and explain the output.
+
+- Make deliberate decisions about what to display:
+    + Does the reader need to see data loading step?
+    + Does the reader need to see your code?
+    + Does the reader need to see the output?
+
+---
+
+---  
+
+## Naming code chunks
+
+- Lets you jump between chunks
+
+- Careful with copy-pasting, duplicate names are not allowed.
+
+(demo)
+
+---
+# Setting chunk options
+
+- `echo`: Should this code be **shown** (echoed)?
+
+- `eval`: Should this code be **run** (evaluated)?
+
+- `include`: Should this code be neither shown nor run?
+
+- `error`: If there is an error, should that display rather than breaking the knit?
+
+- `warning`: If there is a warning, should that display?
+
+- `message`: If there is a message, should that display?
+
+---
+## Setting options for ALL chunks
+
+What does this do?
+
+
+```r
+knitr::opts_chunk$set(fig.width=6, fig.height=4,
+                      echo=TRUE, warning=FALSE, 
+                      message=FALSE, eval=TRUE)
+```
+
+
+- (you can always override these for individual chunks)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

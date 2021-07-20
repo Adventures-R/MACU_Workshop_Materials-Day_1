@@ -1,0 +1,157 @@
+---
+title: "Customer Churn Analysis"
+author: "YOUR NAME HERE"
+date: "7/20/2021"
+output: html_document
+---
+
+## Setup
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+## libraries
+```
+
+## Data Read
+
+```{r}
+churn <- read_csv(here("Data", "________"))
+```
+
+```{r}
+str(churn)
+summary(churn)
+glimpse(churn)
+```
+
+
+## Data Exploration
+
+```{r}
+churn %>%
+  ggplot() +
+  geom_histogram(aes(x = Tenure))
+
+## Explore more quantitative variables
+```
+
+
+```{r}
+## Explore some categorical or discrete variables
+
+churn %>%
+  count(_____)
+
+churn %>%
+  ggplot() +
+  geom_bar(aes(x = _______))
+
+```
+
+## Data Cleaning
+
+
+```{r}
+churn <- churn %>%
+  mutate(
+    ### make necessary variables into factors
+  )
+```
+
+## Data Summaries
+
+1. What are the mean and median account balances among customers in this dataset?
+
+2. What are the mean values of: age, account balance, and salary?
+
+3. Among customers in the USA, what is the average credit score?
+
+4. What country are the customers with the top three highest balances from?
+
+5. Do the average salaries differe between those with credit cards and those without?
+
+6. Is there a difference in gender distribution of customers who have exited the bank?
+
+
+## More Visualization
+
+```{r}
+## Comparing categorical variables
+
+churn %>%
+  ggplot() +
+  geom_bar(aes(x = ______,
+               fill = ______))
+
+churn %>%
+  ggplot() +
+  geom_bar(aes(x = ______,
+               fill = ______),
+           position = "fill")
+
+
+churn %>%
+  ggplot() +
+  geom_bar(aes(x = ______,
+               fill = ______),
+           position = "dodge")
+
+
+churn %>%
+  ggplot() +
+  geom_bar(aes(x = ______,
+               fill = ______)) +
+  facet_wrap(~_______)
+```
+
+```{r}
+## comparing a categorical and a quantitative
+
+________ +
+  geom_boxplot(______)
+
+
+_______ + 
+  geom_density(________,
+               alpha = 0.5)
+
+```
+
+
+```{r}
+## comparing two quantitatives
+
+#### Find the geometry for a scatterplot
+
+```
+
+
+## Pivoting
+
+1. Find the average salary of each gender in each country.
+
+2. Pivot your data frame from (1) so that there is one column for each gender identity.
+
+3. Create a new column showing the difference between female-identifying and male-identifying average salaries.
+
+
+## Joining
+
+Repeat the above, this time for balances rather than salaries.
+
+Join the two datasets by country name.
+
+
+## Your own analysis
+
+Choose one of the following research questions to address with a beautiful plot (or make up your own).  Write up your results in a **new** R Markdown file, in your **new** project.
+
+* How does the relationship between age and churn (exit) differ by gender/country?
+
+* Is a customer with a credit card considered "desirable"?  For example, do they stay with the bank longer?  Are they less likely to exit? Do they use more bank products?
+
+* How does age impact customer behavior?  That is, is the impact of other qualities (balance, salary, etc) on customer tenure and/or churn different across ages?
+
